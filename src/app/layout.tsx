@@ -40,7 +40,6 @@ export default function RootLayout({
                     <main className="flex items-center justify-center min-h-10/12">
                         {children}
                     </main>
-
                     <Footer />
                 </ThemeProvider>
             </body>
