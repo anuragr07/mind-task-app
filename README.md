@@ -14,23 +14,58 @@ pnpm dev
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Folder structure for the app
+mind-task-frontend/
+│
+├── app/                            # App routes directory (Next.js 13+)
+│   ├── (auth)/                     # Route group for authentication
+│   │   ├── login/                  # /login page
+│   │   └── signup/                 # /signup page
+│   ├── dashboard/                 # Protected routes after login
+│   │   └── page.tsx
+│   ├── page.tsx                   # Root landing page
+│   └── layout.tsx                 # Root layout
+│
+├── components/                    # Reusable UI components
+│   ├── ui/                        # ShadCN components
+│   ├── layout/                    # Header, Footer, Sidebar etc.
+│   └── common/                    # Buttons, Form fields, Modal wrappers
+│
+├── features/                      # Feature-based modules (domain-specific)
+│   ├── tasks/                     # Task-related UI + logic
+│   │   ├── components/            # Feature-specific components
+│   │   ├── services/              # API functions related to tasks
+│   │   └── hooks.ts               # React hooks for tasks
+│   ├── auth/
+│   └── labels/
+│
+├── lib/                           # Utility libraries & helpers
+│   ├── api.ts                     # API base client (fetch wrapper / axios)
+│   ├── auth.ts                    # Token handling (access, refresh)
+│   ├── validators.ts              # Input validation utilities
+│   └── constants.ts               # Global constants
+│
+├── services/                      # Shared service functions (API, Auth, etc.)
+│   ├── authService.ts
+│   ├── taskService.ts
+│   └── labelService.ts
+│
+├── hooks/                         # Global custom React hooks
+│   ├── useAuth.ts
+│   └── useTheme.ts
+│
+├── types/                         # Global TypeScript types/interfaces
+│   ├── task.d.ts
+│   ├── user.d.ts
+│   └── index.d.ts
+│
+├── styles/                        # Global and modular styles
+│   ├── globals.css
+│   └── tailwind.css
+│
+├── middleware.ts                  # Middleware (auth protection, etc.)
+├── tailwind.config.ts             # Tailwind config
+├── postcss.config.js              # PostCSS config
+├── tsconfig.json                  # TypeScript config
+├── .env.local                     # Environment variables
+└── next.config.js                 # Next.js config
