@@ -67,7 +67,22 @@ class AuthService {
     // logout service
     static logout = async () => {
         // your logout code here
+        const logoutUrl = `http://localhost:8000/api/auth/logout`;
+
+        try {
+            const response = await axios.post(logoutUrl, {}, {
+                withCredentials: true
+            });
+            return response.data;
+        } catch (err: any) {
+            if (axios.isAxiosError(err)) {
+                throw new Error(err.response?.data?.error || "Login Failed!")
+            }
+            throw new Error("Unexpected error occured")
+        }
+
         // clear refresh token from cookie
+        
         // clear access token from memory
     }
 

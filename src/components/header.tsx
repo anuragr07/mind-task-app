@@ -11,6 +11,7 @@ export function Header() {
             <div className="absolute mr-12">
                 <ModeToggle />
             </div>
+            {/* TODO: Displays only if the user is logged in */}
             <div className="absolute">
                 <ProfileToggle />
             </div>

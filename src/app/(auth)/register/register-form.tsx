@@ -31,7 +31,7 @@ export function RegisterForm({
         const { name, value } = e.target;
         setFormData({
             ...formData,
-            [name]: value
+            [name]: value,
         })
     }
 
@@ -43,11 +43,10 @@ export function RegisterForm({
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        try {
+        if(formData.email !== "" && formData.password !== "") {
+            try {
             const data = await AuthService.register(formData);
-            console.log(data);
             if (!data.accessToken) throw new Error("Register unsuccessful.");
-
 
             // Store the token from data
             tokenService.setToken(data.accessToken);
@@ -58,6 +57,8 @@ export function RegisterForm({
             // Handle error
             setErr(err.message);
         }
+        }
+        setErr("Provide all acredentials to login.");
     }
 
     return (
@@ -125,6 +126,7 @@ export function RegisterForm({
                                     required
                                 />
                             </div>
+                            {/* ALL ERRORS WILL DISPLAY HERE */}
                             {err && (
                                 <p className="text-sm text-red-500">
                                     {err}
