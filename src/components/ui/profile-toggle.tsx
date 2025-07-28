@@ -23,7 +23,7 @@ export function ProfileToggle() {
         } catch (err) {
 
         }
-
+  
     }
 
     return (

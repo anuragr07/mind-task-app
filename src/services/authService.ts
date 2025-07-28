@@ -1,4 +1,5 @@
 import config from "@/lib/config";
+import { UserProfileToken } from "@/models/User";
 import axios from "axios";
 
 const BASE_URL = config.api.baseUrl as string;
@@ -49,7 +50,7 @@ class AuthService {
         const loginUrl = `${BASE_URL}/api/auth/login`;
 
         try {
-            const response = await axios.post(loginUrl, data, {
+            const response = await axios.post<UserProfileToken>(loginUrl, data, {
                 headers: {
                     "Content-Type": "application/json"
                 },
