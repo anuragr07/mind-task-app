@@ -18,7 +18,7 @@ export function ProfileToggle() {
     const handlelogout = async () => {
 
         try {
-            const response = AuthService.logout();
+            const response = AuthService.logoutAPI();
             
         } catch (err) {
 

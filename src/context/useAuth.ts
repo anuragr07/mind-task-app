@@ -1,4 +1,5 @@
 import { UserProfile } from "@/models/User";
+import AuthService from "@/services/authService";
 import { useRouter } from "next/navigation";
 import { createContext, useEffect, useState } from "react";
 
@@ -22,8 +23,40 @@ export const UserProvider = ({ children }: Props ) => {
     const [user, setUser] = useState<UserProfile| null>(null);
     const [isReady, setisReady] = useState(false);
 
-    useEffect(() => {
-       
-    })
+    // We probably do not need this because we are storing our user in state
+    // useEffect(() => {
+    //     // Add code to check & user
+    // })
     
+    // register method
+    const register = async (
+        name: string,
+        email: string,
+        password: string,
+    ) => {
+        const data = {
+            name: name,
+            email: email,
+            password: password,
+        }
+        await AuthService.registerAPI(data)
+        .then((res) => {
+            if(res) {
+                const userObj = {
+                    name: res?.data.name,
+                    email: res?.data.email,
+                    avatarUrl: res?.data.avatarUrl,
+                }
+                setToken(res?.data.token!);
+                setUser(userObj!);
+                console.log("Login Successful");
+            }
+        }) 
+    }
+
+    // login method
+
+    // logout method
+
+    // isLoggedin method
 }

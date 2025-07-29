@@ -18,7 +18,7 @@ interface LoginPayload {
 class AuthService {
 
     // Regfister service
-    static register = async (data: RegisterPayload) => {
+    static registerAPI = async (data: RegisterPayload) => {
 
         const authBaseUrl = config.api.authUrl as string;
         // const registerUrl = `${authBaseUrl}/register`;
@@ -31,21 +31,18 @@ class AuthService {
                 },
                 withCredentials: true, // Required if backend is using cookies
             });
-
             return response.data;
-
         } catch (err: unknown) {
             if (axios.isAxiosError(err)) {
                 console.error("Axios error:", err.response?.data);
                 throw new Error(err.response?.data?.error || "Registration Failed!");
             }
-
             throw new Error("Unexpected error occurred");
         }
     }
 
     // login service
-    static login = async (data: LoginPayload) => {
+    static loginAPI = async (data: LoginPayload) => {
 
         const loginUrl = `${BASE_URL}/api/auth/login`;
 
@@ -56,6 +53,8 @@ class AuthService {
                 },
                 withCredentials: true
             });
+
+            // return response only
             return response.data;
         } catch (err: any) {
             if (axios.isAxiosError(err)) {
@@ -66,7 +65,7 @@ class AuthService {
     }
 
     // logout service
-    static logout = async () => {
+    static logoutAPI = async () => {
         // your logout code here
         const logoutUrl = `http://localhost:8000/api/auth/logout`;
 
@@ -82,13 +81,12 @@ class AuthService {
             throw new Error("Unexpected error occured")
         }
 
-        // clear refresh token from cookie
-        
-        // clear access token from memory
+        // TODO: clear refresh token from cookie
+        // TODO: clear access token from memory
     }
 
     // refresh token service
-    static refreshAccessToken = async () => {
+    static refreshAccessTokenAPI = async () => {
         // const refreshUrl = `${BASE_URL}/api/auth/refresh`;
         const refreshUrl = `http://localhost:8000/api/auth/refresh`
 

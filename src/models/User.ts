@@ -4,8 +4,8 @@ export type UserProfileToken = {
     token: string,
 }
 
-export type UserProfile = [
+export type UserProfile = {
     name: string,
     email: string,
     avatarUrl: string,
-]
+}
