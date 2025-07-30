@@ -25,7 +25,7 @@ class AuthService {
         const registerUrl = `http://localhost:8000/api/auth/register`;
 
         try {
-            const response = await axios.post(registerUrl, data, {
+            const response = await axios.post<UserProfileToken>(registerUrl, data, {
                 headers: {
                     "Content-Type": "application/json"
                 },
@@ -53,8 +53,6 @@ class AuthService {
                 },
                 withCredentials: true
             });
-
-            // return response only
             return response.data;
         } catch (err: any) {
             if (axios.isAxiosError(err)) {
