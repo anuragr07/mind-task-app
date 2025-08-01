@@ -1,5 +1,5 @@
-import { Header } from "@/components/header";
-import Image from "next/image";
+"use client"
+
 import { LoginForm } from "./login-form";
 
 export default function Login() {

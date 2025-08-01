@@ -5,63 +5,76 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import Image from "next/image"
 import Link from "next/link"
-import React, { useEffect, useState } from "react"
+import React from "react"
 import AuthService from "@/services/authService"
 import tokenService from "@/services/tokenService"
-import { useRouter } from "next/navigation"
+// import { useRouter } from "next/navigation"
+import z from "zod"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
 
 export function LoginForm({
     className,
     ...props
 }: React.ComponentProps<"div">) {
 
-    const router = useRouter();
-    const [formData, setFormData] = useState({
-        email: "",
-        password: "",
-    });
-    const [err, setErr] = useState("");
+    const LoginFormDataSchema = z.object({
+        email: z.email(),
+        password: z.string(),
+    })
 
-    const handleEmailChange = (e: any) => {
-        setFormData({
-            ...formData,
-            email: e.target.value,
-        })
+    type LoginFormData = z.infer<typeof LoginFormDataSchema>
+
+    const { register, handleSubmit, formState: { errors } } = useForm({ resolver: zodResolver(LoginFormDataSchema) })
+
+    const submitLoginFormData = (formData: LoginFormData) => {
+        console.log("Login form submission invoked", formData);
     }
 
-    const handlePasswordChange = (e: any) => {
-        setFormData({
-            ...formData,
-            password: e.target.value,
-        })
-    }
+    // const router = useRouter();
+    // const [formData, setFormData] = useState({
+    //     email: "",
+    //     password: "",
+    // });
+    // const [err, setErr] = useState("");
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        if (formData.email !== "" && formData.password !== "") {
-            try {
-                const data = await AuthService.login(formData);
-                if (!data.accessToken) throw new Error("Login unsuccessful.");
+    // const handleEmailChange = (e: any) => {
+    //     setFormData({
+    //         ...formData,
+    //         email: e.target.value,
+    //     })
+    // }
 
-                // Store token from data
-                tokenService.setToken(data.accessToken);
+    // const handlePasswordChange = (e: any) => {
+    //     setFormData({
+    //         ...formData,
+    //         password: e.target.value,
+    //     })
+    // }
 
-                // Redirect to dashboard
-                router.push('/dashboard')
-            } catch (err: any) {
-                setErr(err.message);
-            }
-        }
-        setErr("Provide all acredentials to login.");
-    }
+    // const handleSubmit = async (e: React.FormEvent) => {
+    //     if (formData.email !== "" && formData.password !== "") {
+    //         try {
+    //             const data = await AuthService.loginAPI(formData);
+    //             if (!data.accessToken) throw new Error("Login unsuccessful.");
 
+    //             // Store token from data
+    //             tokenService.setToken(data.accessToken);
 
-
+    //             // Redirect to dashboard
+    //             router.push('/dashboard')
+    //         } catch (err: any) {
+    //             setErr(err.message);
+    //         }
+    //     }
+    //     setErr("Provide all acredentials to login.");
+    // }
 
     return (
         <div className={cn("flex flex-col gap-6", className)} {...props}>
             <Card className="overflow-hidden p-0">
                 <CardContent className="grid p-0 md:grid-cols-2">
-                    <form className="p-6 md:p-8" onSubmit={handleSubmit}>
+                    <form className="p-6 md:p-8" onSubmit={handleSubmit(submitLoginFormData)}>
                         <div className="flex flex-col gap-6">
                             <div className="flex flex-col items-center text-center">
                                 <h1 className="text-2xl font-bold">Welcome back</h1>
@@ -75,9 +88,10 @@ export function LoginForm({
                                     id="email"
                                     type="email"
                                     placeholder="m@example.com"
-                                    onBlur={handleEmailChange}
+                                    {...register("email")}
                                     required
                                 />
+                                {errors.email && <span className="text-red-600">{errors.email.message}</span>}
                             </div>
                             <div className="grid gap-3">
                                 <div className="flex items-center">
@@ -92,16 +106,12 @@ export function LoginForm({
                                 <Input
                                     id="password"
                                     type="password"
-                                    onBlur={handlePasswordChange}
+                                    {...register("password")}
                                     required
                                 />
+                                {errors.password && <span className="text-red-600">{errors.password.message}</span>}
                             </div>
                             {/* ALL ERRORS WILL DISPLAY HERE */}
-                            {err && (
-                                <p className="text-sm text-red-500">
-                                    {err}
-                                </p>
-                            )}
                             <Button
                                 type="submit"
                                 id="submit"

@@ -5,67 +5,88 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { useEffect, useState } from "react"
+// import { useEffect, useState } from "react"
 import AuthService from "@/services/authService"
 import tokenService from "@/services/tokenService"
-import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { isUserAuthenticated } from "@/lib/authClient"
+import { z } from "zod"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
 
 export function RegisterForm({
     className,
     ...props
 }: React.ComponentProps<"div">) {
 
-    const router = useRouter();
-    const [err, setErr] = useState("");
-    const [formData, setFormData] = useState({
-        name: "",
-        email: "",
-        password: ""
-    });
+    const RegisterFormDataSchema = z.object({
+        name: z.string().min(4).max(50),
+        email: z.email(),
+        password: z.string().min(8, "Password must contain minimum 8 characters").max(32, "Password can be maximum of 32 characters"),
+        confirmPassword: z.string().min(8).max(32),
+    }).refine((data) => data.password === data.confirmPassword, {
+        message: "Passwords don't match",
+        path: ["confirmPassword"],
+    })
 
-    // TODO Work on the validation using zod
-    // handle change in form data
-    const handleChange = (e: any) => {
-        const { name, value } = e.target;
-        setFormData({
-            ...formData,
-            [name]: value,
-        })
+    type RegisterFormData = z.infer<typeof RegisterFormDataSchema>
+
+    const { register, handleSubmit, formState: {errors} } = useForm<RegisterFormData>({resolver: zodResolver(RegisterFormDataSchema)})
+
+    const submitRegisterFormData = (formData: RegisterFormData) => {
+        console.log("Register form submission invoked", formData);
+        // Add code for register form submission
+
     }
 
-    const handleConfirmPasswordChange = (e: any) => {
-        if (e.target.value !== formData.password) setErr("Password does not match.");
-        else setErr("");
-    }
+    // const router = useRouter();
+    // const [err, setErr] = useState("");
+    // const [formData, setFormData] = useState({
+    //     name: "",
+    //     email: "",
+    //     password: ""
+    // });
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
+    // // TODO Work on the validation using zod
+    // // handle change in form data
+    // const handleChange = (e: any) => {
+    //     const { name, value } = e.target;
+    //     setFormData({
+    //         ...formData,
+    //         [name]: value,
+    //     })
+    // }
 
-        if(formData.email !== "" && formData.password !== "") {
-            try {
-            const data = await AuthService.register(formData);
-            if (!data.accessToken) throw new Error("Register unsuccessful.");
+    // const handleConfirmPasswordChange = (e: any) => {
+    //     if (e.target.value !== formData.password) setErr("Password does not match.");
+    //     else setErr("");
+    // }
 
-            // Store the token from data
-            tokenService.setToken(data.accessToken);
+    // const handleSubmit = async (e: React.FormEvent) => {
+    //     e.preventDefault();
 
-            // Redirect to dashboard
-            router.push('/dashboard');
-        } catch (err: any) {
-            // Handle error
-            setErr(err.message);
-        }
-        }
-        setErr("Provide all acredentials to login.");
-    }
+    //     if(formData.email !== "" && formData.password !== "") {
+    //         try {
+    //         const data = await AuthService.register(formData);
+    //         if (!data.accessToken) throw new Error("Register unsuccessful.");
+
+    //         // Store the token from data
+    //         tokenService.setToken(data.accessToken);
+
+    //         // Redirect to dashboard
+    //         router.push('/dashboard');
+    //     } catch (err: any) {
+    //         // Handle error
+    //         setErr(err.message);
+    //     }
+    //     }
+    //     setErr("Provide all acredentials to login.");
+    // }
 
     return (
         <div className={cn("sflex flex-col gap-6", className)} {...props}>
             <Card className="overflow-hidden p-0">
                 <CardContent className="grid p-0 md:grid-cols-2">
-                    <form className="p-6 md:p-8" onSubmit={handleSubmit}>
+                    <form className="p-6 md:p-8" onSubmit={handleSubmit(submitRegisterFormData)}>
                         <div className="flex flex-col gap-6">
                             <div className="flex flex-col items-center text-center">
                                 <h1 className="text-2xl font-bold">Welcome to Mind Task</h1>
@@ -77,23 +98,23 @@ export function RegisterForm({
                                 <Label htmlFor="name">Your full name</Label>
                                 <Input
                                     id="name"
-                                    name="name"
                                     type="text"
                                     placeholder="John Doe"
-                                    onChange={handleChange}
+                                    {...register("name")}
                                     required
                                 />
+                                {errors.name && <span className="text-red-600">{errors.name.message}</span>}
                             </div>
                             <div className="grid gap-3">
                                 <Label htmlFor="email">Email</Label>
                                 <Input
                                     id="email"
-                                    name="email"
                                     type="email"
                                     placeholder="john.doe@example.com"
-                                    onChange={handleChange}
+                                    {...register("email")}
                                     required
                                 />
+                                {errors.email && <span className="text-red-600">{errors.email.message}</span>}
                             </div>
                             <div className="grid gap-3">
                                 <div className="flex items-center">
@@ -108,11 +129,11 @@ export function RegisterForm({
                                 </div>
                                 <Input
                                     id="password"
-                                    name="password"
                                     type="password"
-                                    onChange={handleChange}
+                                    {...register("password")}
                                     required
                                 />
+                                {errors.password && <span className="text-red-600">{errors.password.message}</span>}
                             </div>
                             <div className="grid gap-3">
                                 <div className="flex items-center">
@@ -120,18 +141,13 @@ export function RegisterForm({
                                 </div>
                                 <Input
                                     id="confirm-password"
-                                    name="confirm-password"
                                     type="password"
-                                    onChange={handleConfirmPasswordChange}
+                                    {...register("confirmPassword")}
                                     required
                                 />
+                                {errors.confirmPassword && <span className="text-red-600">{errors.confirmPassword.message}</span>}
                             </div>
                             {/* ALL ERRORS WILL DISPLAY HERE */}
-                            {err && (
-                                <p className="text-sm text-red-500">
-                                    {err}
-                                </p>
-                            )}
                             <Button
                                 type="submit"
                                 id="submit"

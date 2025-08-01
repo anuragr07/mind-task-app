@@ -82,6 +82,14 @@ export const UserProvider = ({ children }: Props) => {
             }).catch(err => console.error(err));
     }
 
+    // refresh access token
+    const refreshAccessToken = async () => {
+        await AuthService.refreshAccessTokenAPI()
+        .then((res) => {
+            
+        })
+    }
+
     // logout method
     const logoutUser = async () => {
         setUser(null);

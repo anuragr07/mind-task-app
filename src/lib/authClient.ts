@@ -6,7 +6,7 @@ export async function isUserAuthenticated() {
 
     if(!accessToken) {
         try {
-            const response = await AuthService.refreshAccessToken();
+            const response = await AuthService.refreshAccessTokenAPI();
             accessToken = response.accessToken;
             if(accessToken) {
                 tokenService.setToken(accessToken);
